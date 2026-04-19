@@ -26,6 +26,16 @@ class List {
         void remove(int e); // rimuovi prima occorenza di e
         void remove_last(int e); // rimuovi seconda occorenza di e
         int sum() const;
+        void remove_all(int e);
+        void remove_up_to_sum(int e);
+        void flip();
+        void double_even();
+        bool equal(const List& curr) const;
+        bool countfrom0(int& count) const;    // count elements after the last 0
+        bool operator==(const List& other) const;  // element-wise equality
+        List   operator+ (const List& other) const;  // concatenation (new list)
+        List&  operator= (const List& other);         // copy-assignment (copy-and-swap)
+ 
 
     private:
         node* head;
@@ -35,6 +45,12 @@ class List {
         bool remove_last_recv1(int e, node* prev, node* curr);
         bool remove_last_recv2(int e, node*& curr);
         int sum_rec(node* curr) const;
+        int remove_up_to_sum_rec(node*& curr, int e);
+        void flip_rec(node*& curr);
+        void double_even_rec(node*& curr);
+        bool equal    (node* head, node* head_other)  const;  // iterative equality
+        bool equal_rec(node* curr, node* curr_other)  const;  // recursive equality
+        bool countfrom0_rec  (node* curr, int& count) const;
 };
 
 List::List() {
@@ -114,6 +130,7 @@ bool List::is_present(int e) const {
     return found;
 }
 
+// assumi range corretto
 int& List::at(int pos) {
     node* curr = this->head;
     for(int i = 0; i < pos; i++) {
@@ -122,6 +139,7 @@ int& List::at(int pos) {
     return curr->info;
 }
 
+// assumi range corretto
 const int& List::at(int pos) const {
     node* curr = this->head;
     for(int i = 0; i < pos; i++) {
@@ -209,6 +227,179 @@ int List::sum_rec(node* current) const {
     if(current == nullptr) return 0;
     return current->info + sum_rec(current->next);
 }
+
+void List::remove_all(int e) {
+    node** current = &head;
+    while(*current) {
+        if((*current)->info == e) {
+            node* tmp = (*current);
+            *current = tmp->next;
+            delete tmp;
+        }
+        else 
+            current = &(*current)->next;
+    }
+}
+
+void List::remove_up_to_sum(int e) {
+    remove_up_to_sum_rec(head, e);
+}
+
+int List::remove_up_to_sum_rec(node*& curr, int e) {
+    if(!curr) return 0;
+    int rightSum = remove_up_to_sum_rec(curr->next, e);
+    int sum = rightSum + curr->info;
+    if(sum <= e) {
+        node* tmp = curr;
+        curr = curr->next;
+        delete tmp;
+    }
+    return sum;
+}
+
+void List::flip() {
+    node* current = head;
+    node* prev = nullptr;
+    node* tmp = nullptr;
+    while(current) {
+        tmp = current->next;
+        current->next = prev;
+        prev = current;
+        current = tmp;
+    }
+    head = current;
+}
+
+void List::flip_rec(node*& current) {
+    if(!current || !current->next) return;
+    node* tmp = current;
+    node* tmp2 = current->next;
+    flip_rec(current->next);
+    node* nuova = current->next;
+    tmp2->next = tmp;
+    tmp = nullptr;
+    current = nuova;
+}
+
+void List::double_even() {
+    node* curr = head;
+    while(curr) {
+        node* next = curr->next;
+        if(curr->info % 2 == 0) {
+            node* tmp = new node{curr->info, next};
+            curr->next = tmp;
+        }
+        curr = next;
+    }
+}
+
+void List::double_even_rec(node*& curr) {
+    if(!curr) return;
+    node* next = curr->next;
+    if(curr->info % 2 == 0) {
+        node* tmp = new node{curr->info, next};
+        curr->next = tmp;
+    }
+    return double_even_rec(next);
+}
+
+bool List::equal(const List& curr) const {
+    if(this->head == curr.head) return true;
+    else return equal_rec(this->head, curr.head);
+}
+
+bool List::equal_rec(node* curr, node* curr_other) const {
+    if(!curr && !curr_other) return true;
+    if(!curr || !curr_other) return false;
+    if(curr->info == curr_other->info) return equal_rec(curr->next, curr_other->next);
+    else return false;
+}
+
+bool List::equal(node* curr, node* curr_other) const {
+    while(curr || curr_other) {
+        if(!curr) return false;
+        if(!curr_other) return false;
+        if(curr->info == curr_other->info) {
+            curr = curr->next;
+            curr_other = curr_other->next;
+        }
+        else return false;
+    } 
+    return true;
+}
+
+bool List::countfrom0(int& counter) const {
+    node* current = this->head;
+    bool found = false;
+    while(current) {
+        if(current->info == 0) {
+            found = true;
+            counter = 0;
+        } else {
+            counter++;
+        }
+        current = current->next;
+    }
+    return found;
+}
+
+bool List::countfrom0_rec(node* curr, int& counter) const {
+    if(!curr) return false;
+
+    if(curr->info == 0) {
+        counter = 0;
+        countfrom0_rec(curr->next, counter);
+        return true;
+    } 
+    else {
+        counter++;
+        return countfrom0_rec(curr->next, counter);
+    }
+}
+
+bool List::operator==(const List& other) const {
+    return this->equal(other);
+}
+List List::operator+(const List& other) const {
+    List tmp;
+    node** current = &(tmp.head);
+    node* firstL = this->head;
+    node* secondL = other.head;
+
+    while(firstL) {
+        node* newNode = new node{firstL->info, nullptr};
+        *current = newNode;
+        firstL = firstL->next;
+        current = &(*current)->next; 
+    }
+    while(secondL) {
+        node* newNode = new node{secondL->info, nullptr};
+        *current = newNode;
+        secondL = secondL->next;
+        current = &(*current)->next;
+    }
+    return tmp;
+}
+List& List::operator=(const List& other) {
+    if(this->head != other.head) {
+        node* elimina = this->head;
+        node* current = other.head;
+        while(elimina) {
+            node* tmp = elimina;
+            elimina = elimina->next; 
+            delete tmp;
+        }
+        this->head = nullptr; 
+        node** dlt = &(this->head); 
+        while(current) {
+            node* newNode = new node{current->info, nullptr};
+            *dlt = newNode;
+            current = current->next;
+            dlt = &(*dlt)->next;
+        }
+    }
+    return *this;
+}        
 
 
 int main(void) {
