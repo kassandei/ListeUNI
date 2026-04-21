@@ -40,11 +40,12 @@ class List {
         bool operator==(const List& other) const;  // element-wise equality
         List   operator+ (const List& other) const;  // concatenation (new list)
         List&  operator= (const List& other);         // copy-assignment (copy-and-swap)
- 
+        
+        void swap();
 
     private:
         node* head;
-        
+         
         // funzioni helper
         void print_rev_rec(node* curr) const;
         bool remove_last_recv1(int e, node* prev, node* curr);
@@ -56,6 +57,7 @@ class List {
         bool equal    (node* head, node* head_other)  const;  // iterative equality
         bool equal_rec(node* curr, node* curr_other)  const;  // recursive equality
         bool countfrom0_rec  (node* curr, int& count) const;
+        void swap_rec(node*& l);
 };
 
 List::List() {
@@ -415,6 +417,20 @@ List& List::operator=(const List& other) {
     return *this;
 }        
 
+void List::swap() {
+    swap_rec(head);
+}
+
+void List::swap_rec(node*& curr) {
+    if(!curr || !curr->next) {
+        return;
+    }
+    node* tmp = curr;
+    curr = curr->next;
+    node* tmp2 = curr->next;
+    curr->next = tmp;
+    tmp->next = tmp2;
+}
 
 int main(void) {
     List a;
