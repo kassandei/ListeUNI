@@ -22,6 +22,11 @@ class List {
 
         int& at(int pos);
         const int& at(int pos) const;
+        int& at_rec(int pos, node* curr);
+
+        // sia ricorsivo e interativo
+        // eliminare elementi fino a 0 
+        // eliminare tutti gli elementi pari/dispari
 
         void remove(int e); // rimuovi prima occorenza di e
         void remove_last(int e); // rimuovi seconda occorenza di e
@@ -133,11 +138,20 @@ bool List::is_present(int e) const {
 // assumi range corretto
 int& List::at(int pos) {
     node* curr = this->head;
-    for(int i = 0; i < pos; i++) {
+    for(int i = 0; i < pos && curr; i++) {
         curr = curr->next;
     }
+    //assert(pc!=nullptr);
     return curr->info;
 }
+
+//
+int& List::at_rec(int pos, node* h) {
+    //assert(h != nullptr);
+    if(pos == 0) return h->info;
+    return at_rec(pos-1, h->next);
+}
+
 
 // assumi range corretto
 const int& List::at(int pos) const {
