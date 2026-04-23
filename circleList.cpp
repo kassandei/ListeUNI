@@ -16,6 +16,7 @@ class ListCirc {
         void insert(int n);
         void print() const;
         bool presente(int n);
+        void elimina(int n);
     private: 
         Cella* l;  // no head no trail nelle liste circolari
 };
@@ -40,10 +41,18 @@ void ListCirc::insert(int n) {
 }
 
 bool ListCirc::presente(int n) {
-    Cella* pc = l;
-    bool found = false;
-    while(pc != l && found) {
-       if(pc->info == n) found = true; 
+    if(l == nullptr) return false; 
+    else {
+        bool found = false;
+        Cella* pc = l;
+        do {
+            if(pc->info == n) found = true;
+            pc = pc->next;
+        } while(!found && pc != l);
+        return found;
     }
-    return found;
+}
+
+void ListCirc::elimina(int n) {
+    if()
 }
