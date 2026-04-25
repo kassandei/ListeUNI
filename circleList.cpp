@@ -54,5 +54,37 @@ bool ListCirc::presente(int n) {
 }
 
 void ListCirc::elimina(int n) {
-    if()
+    Cella* pc = l;
+    Cella* prev = nullptr;
+    bool found = false;
+    if(pc) { 
+        do {
+            if(pc->info == n) found = true;
+            else {
+                prev = pc;
+                pc = pc->next;
+            }
+        } while(pc != l && !found);
+        if(found) {
+            if(prev == nullptr) {
+                // unico elemento presente in lista
+                if(pc->next == pc) {
+                    l = nullptr;
+                }
+                else {
+                    // primo elemento da eliminare 
+                    Cella* giro = l;
+                    while(giro->next != l) {
+                        giro = giro->next;
+                    }
+                    l = l->next;
+                    giro->next = l;
+                }
+            }
+            else {
+                prev->next = pc->next;
+            }
+            delete pc; 
+        } 
+    }
 }
