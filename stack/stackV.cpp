@@ -20,20 +20,20 @@ Stack::Stack(const Stack& s) {
 }
 
 void Stack::push(int a) {
-    v.push_back(a);
+    pimpl->v.push_back(a);
 }
 
 void Stack::pop() {
-    assert(v.size() == 0);
-    v.pop_back();
+    assert(pimpl->v.size() == 0);
+    pimpl->v.pop_back();
 }
 
 bool Stack::is_empty() const {
-    return v.empty();
+    return pimpl->v.empty();
 }
 
 int Stack::top() const {
-    assert(v.size() == 0);
-    return v.at(v.size()-1);
+    assert(pimpl->v.size() == 0);
+    return pimpl->v.at(pimpl->v.size()-1);
 }
 
