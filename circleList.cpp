@@ -19,6 +19,8 @@ class ListCirc {
         void elimina(int n);
         int sommaPari(Cella* curr) const;
         bool allEvenPositive(Cella* curr) const;
+        bool removePos(int pos);
+        bool removeRecPos(int pos, Cella*& curr);
     private: 
         Cella* l;  // no head no trail nelle liste circolari
 };
@@ -122,4 +124,48 @@ bool ListCirc::allEvenPositive(Cella* curr) const {
         curr = curr->next;
     } while(all && curr != this->l);
     return all;
+}
+
+bool ListCirc::removePos(int pos) {
+    Cella* curr = this->l;
+    Cella* prev = nullptr;
+    if(!curr) return false;
+    else if(pos == 0 && curr->next == this->l) {
+        this->l = nullptr;
+        delete curr;
+    }
+    else if(pos == 0) { 
+        while(curr->next != this->l) {
+            curr = curr->next;
+        }
+        Cella* tmp = this->l;
+        curr->next = this->l->next;
+        this->l = this->l->next;
+        delete tmp;
+    } 
+    else {
+        while(pos && curr->next != this->l) {
+            prev = curr;
+            curr = curr->next;
+            pos--;
+        }
+
+        if(pos > 0 || curr == this->l) return false;
+        prev->next = curr->next;
+        delete curr;
+    }
+    return true;
+}
+
+// supponiamo che abbia piu di un elemento e che il primo elemento non sia da eliminare
+// serve un wrapper pubblico per gestire i casi citati
+bool ListCirc::removeRecPos(int pos, Cella*& curr) {
+    if(curr == this->l) return false;
+    if(pos == 0) {
+        Cella* tmp = curr;
+        curr = curr->next;
+        delete tmp;
+        return true;
+    }
+    return removeRecPos(pos-1, curr->next);
 }

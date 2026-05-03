@@ -21,6 +21,8 @@ class ListDL {
         int sommaPari(Node* curr) const;
         bool removePos(int pos);
         bool removePosRec(int pos, Node* curr);
+        bool operator==(ListDL& other) const;
+        bool equalRec(Node* list1, Node* list2) const;
     
     private:
         void remove_rec(Node* head, Node* tail, int n);
@@ -131,4 +133,28 @@ bool ListDL::removePosRec(int pos, Node* curr) {
         return true;
     }
     return removePosRec(pos-1, curr->next);
+}
+
+bool ListDL::operator==(ListDL& other) const {
+    Node* current = this->head;
+    Node* otherH = other.head;
+    while(current || otherH) {
+        if(!current) return false;
+        if(!otherH) return false;
+        if(current->info != otherH->info) return false;
+        current = current->next;
+        otherH = otherH->next;
+    }
+    return true;
+    /*
+    Ricorsivamente si poteva chiamare
+    return this->equalRec(this->head, other.head);
+    */
+}
+
+bool ListDL::equalRec(Node* list1, Node* list2) const {
+    if(!list1 && !list2) return true;
+    if(!list1 || !list2) return false;
+    if(list1->info == list2->info) return equalRec(list1->next, list2->next);
+    else return false;
 }

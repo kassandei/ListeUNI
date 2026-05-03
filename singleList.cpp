@@ -44,6 +44,14 @@ class List {
         bool removePos(int pos);
 
         bool removeRecPos(int pos, node*& curr); 
+        int removeUpToSum(int sum);
+        int removeUpToSumRec(int sum, node*& curr);
+        int removeFromTail(int sum);
+        int removeFromTailRec(int& sum, node*& curr);
+        int duplOdd();
+        int duplOddRic(node*& curr);
+        void removeCons();
+        void removeConsRec(node*& curr);
 
     private:
         node* head;
@@ -491,9 +499,126 @@ bool List::removeRecPos(int pos, node*& curr) {
     return removeRecPos(pos-1, curr->next);
 }
 
+int List::removeUpToSum(int sum) {
+    node* curr = this->head;
+    int count = 0;
+    while(curr) {
+        if(sum - curr->info < 0) break;
+        node* tmp = curr;
+        sum -= curr->info;
+        curr = curr->next;
+        count++;
+        delete tmp;
+    }
 
-// da fare !aggiungo un parametro 
-//bool List::eliminaSeqPari(node*& curr) {
+    this->head = curr;
+    return count;
+}
+
+int List::removeUpToSumRec(int sum, node*& curr) {
+    if(!curr) return 0;
+    if(sum - curr->info < 0) {
+        return 0;
+    } 
+    int val = curr->info; 
+    node* tmp = curr;
+    curr = curr->next;
+    delete tmp;
+
+    return 1 + removeUpToSumRec(sum - val, curr);
+}
+int List::removeFromTail(int sum) {
+    int deleteUp = sum;
+    int fromend = 0;
+    while(deleteUp && this->head) {
+        node* curr = this->head;
+        node* prev = nullptr;
+        while(curr->next) {
+            prev = curr;
+            curr = curr->next;
+        }
+        if(deleteUp - curr->info >= 0) {
+            if(prev == nullptr) {
+                this->head = nullptr;
+            }
+            else prev->next = curr->next;
+            fromend += curr->info;
+            deleteUp -= curr->info;
+            delete curr;
+        }
+        else {
+            break;
+        }
+    } 
+    return fromend;
+}
+
+int List::removeFromTailRec(int& sum, node*& curr) {
+    if(!curr) return 0;
+    int fromend = removeFromTailRec(sum, curr->next);
+    int tmp = 0;
+    if(sum - curr->info >= 0) {
+        sum -= curr->info;
+        tmp = curr->info;
+        delete curr;
+        curr = nullptr;
+    }
+    return fromend + tmp;
+}
+
+int List::duplOdd() {
+    node* curr = this->head;
+    int count = 0;
+    while(curr) {
+        if(curr->info % 2 != 0) {
+            node* nuovo = new node{curr->info, curr->next};
+            curr->next = nuovo;
+            curr = nuovo->next;
+            count++;
+        }
+        else {
+            curr = curr->next;
+        }
+    }
+    return count;
+}
+int List::duplOddRic(node*& curr) {
+    if(!curr) return 0;
+    if(curr->info % 2 != 0) {
+        node* nuovo = new node{curr->info, curr->next};
+        curr->next = nuovo;
+        return 1 + duplOddRic(nuovo->next);
+    }
+    else 
+        return duplOddRic(curr->next);
+}
+
+void List::removeCons() {
+    node* curr = this->head;
+    while(curr && curr->next) {
+        if(curr->info == curr->next->info) {
+            node* tmp = curr->next;
+            curr->next = tmp->next;
+            delete tmp;
+        }
+        else
+            curr = curr->next;
+    }
+}
+
+void List::removeConsRec(node*& curr) {
+    if(!curr || !curr->next) return;
+    if(curr->info == curr->next->info) {
+        node* tmp = curr->next;
+        curr->next = curr->next->next;
+        delete tmp;
+        removeConsRec(curr);
+    }
+    else 
+        removeConsRec(curr->next);
+}
+
+
 int main(void) {
     List a;
     a.append(10);
