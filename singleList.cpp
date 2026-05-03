@@ -41,6 +41,9 @@ class List {
         int sommaPari(node*& curr) const;
         node* getHead(); 
         bool allEvenPositive(node* curr) const;
+        bool removePos(int pos);
+
+        bool removeRecPos(int pos, node*& curr); 
 
     private:
         node* head;
@@ -453,6 +456,41 @@ bool List::allEvenPositive(node* curr) const {
         return false;
     return allEvenPositive(curr->next);
 }
+
+
+bool List::removePos(int pos) {
+    node* curr = this->head;
+    node* prev = nullptr;
+    while(curr && pos) {
+        prev = curr;
+        curr = curr->next;
+        pos--;
+    }
+
+    if(!curr)
+        return false;
+
+    if(curr == this->head) {
+        this->head = curr->next;
+    }
+    else 
+        prev->next = curr->next;
+
+    delete curr;
+    return true;
+}
+
+bool List::removeRecPos(int pos, node*& curr) {
+    if(!curr) return false;
+    if(pos == 0) {
+        node* tmp = curr;
+        curr = curr->next;
+        delete tmp;
+        return true;
+    }
+    return removeRecPos(pos-1, curr->next);
+}
+
 
 // da fare !aggiungo un parametro 
 //bool List::eliminaSeqPari(node*& curr) {

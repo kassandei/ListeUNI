@@ -19,6 +19,8 @@ class ListDL {
         const int& at(int pos) const;
         void remove(int pos);
         int sommaPari(Node* curr) const;
+        bool removePos(int pos);
+        bool removePosRec(int pos, Node* curr);
     
     private:
         void remove_rec(Node* head, Node* tail, int n);
@@ -89,4 +91,44 @@ int ListDL::sommaPari(Node* curr) const {
     else {
         return sommaPari(curr->next);
     }
+}
+bool ListDL::removePos(int pos) {
+    Node* curr = this->head;
+    while(curr && pos) {
+        pos--;
+        curr = curr->next;
+    }
+
+    if(!curr) return false;
+    if(curr == this->head) {
+        this->head = curr->next;
+        if(this->head)
+            this->head->prev = nullptr;
+    }
+    else {
+        curr->prev->next = curr->next;
+        if(curr->next != nullptr)
+            curr->next->prev = curr->prev;
+    }
+    delete curr;
+    return true;
+}
+
+bool ListDL::removePosRec(int pos, Node* curr) {
+    if(!curr) return false;
+    if(pos == 0) {
+        if(curr->prev == nullptr) {
+            this->head = curr->next;
+            if(this->head)
+                this->head->prev = nullptr;
+        }
+        else { 
+            curr->prev->next = curr->next;
+            if(curr->next) 
+                curr->next->prev = curr->prev;
+        }
+        delete curr;
+        return true;
+    }
+    return removePosRec(pos-1, curr->next);
 }
