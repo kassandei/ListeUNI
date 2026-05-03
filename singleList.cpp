@@ -24,10 +24,6 @@ class List {
         const int& at(int pos) const;
         int& at_rec(int pos, node* curr);
 
-        // sia ricorsivo e interativo
-        // eliminare elementi fino a 0 
-        // eliminare tutti gli elementi pari/dispari
-
         void remove(int e); // rimuovi prima occorenza di e
         void remove_last(int e); // rimuovi seconda occorenza di e
         int sum() const;
@@ -40,8 +36,11 @@ class List {
         bool operator==(const List& other) const;  // element-wise equality
         List   operator+ (const List& other) const;  // concatenation (new list)
         List&  operator= (const List& other);         // copy-assignment (copy-and-swap)
-        
+        bool eliminaSeqPari(node*& curr); 
         void swap();
+        int sommaPari(node*& curr) const;
+        node* getHead(); 
+        bool allEvenPositive(node* curr) const;
 
     private:
         node* head;
@@ -432,10 +431,38 @@ void List::swap_rec(node*& curr) {
     tmp->next = tmp2;
 }
 
+
+int List::sommaPari(node*& curr) const {
+    if(!curr) return 0;
+    if(curr->info % 2 == 0) {
+        return curr->info + sommaPari(curr->next);
+    }
+    else {
+        return sommaPari(curr->next);
+    }
+}
+
+node* List::getHead() {
+    return this->head;
+}
+
+
+bool List::allEvenPositive(node* curr) const {
+    if(!curr) return true;
+    if( !(curr->info >= 0 && curr->info % 2 == 0) )
+        return false;
+    return allEvenPositive(curr->next);
+}
+
+// da fare !aggiungo un parametro 
+//bool List::eliminaSeqPari(node*& curr) {
 int main(void) {
     List a;
     a.append(10);
-    a.append(15);
-    a.prepend(3);
+    a.append(12);
+    a.prepend(2);
     a.print();
+    node* head = a.getHead();
+    int b = a.sommaPari(head);
+    std::cout << b;
 }

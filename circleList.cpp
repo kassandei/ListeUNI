@@ -17,6 +17,8 @@ class ListCirc {
         void print() const;
         bool presente(int n);
         void elimina(int n);
+        int sommaPari(Cella* curr) const;
+        bool allEvenPositive(Cella* curr) const;
     private: 
         Cella* l;  // no head no trail nelle liste circolari
 };
@@ -87,4 +89,37 @@ void ListCirc::elimina(int n) {
             delete pc; 
         } 
     }
+}
+
+int ListCirc::sommaPari(Cella* curr) const {
+    /*int sum = 0;
+    do {
+        if(curr->info % 2 == 0) sum += curr->info;
+        curr = curr->next;
+    } while(curr != this->l);
+
+    return sum;
+    */
+    if(curr->next == this->l) {
+        if(curr->info % 2 == 0) return curr->info;
+        else return 0;
+    } 
+    if(curr->info % 2 == 0) {
+        return curr->info + sommaPari(curr->next);
+    }
+    else {
+        return sommaPari(curr->next);
+    }
+}
+
+bool ListCirc::allEvenPositive(Cella* curr) const {
+    if(!curr) return true;
+    bool all = true;
+    do {
+        if(!(curr->info >= 0 && curr->info % 2 == 0)) {
+            all = false;
+        }
+        curr = curr->next;
+    } while(all && curr != this->l);
+    return all;
 }
