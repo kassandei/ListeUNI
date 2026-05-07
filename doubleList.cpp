@@ -23,6 +23,8 @@ class ListDL {
         bool removePosRec(int pos, Node* curr);
         bool operator==(ListDL& other) const;
         bool equalRec(Node* list1, Node* list2) const;
+        int removeUpToSum(int sum);
+        int removeUpToSumRec(int sum, Node* curr);
     
     private:
         void remove_rec(Node* head, Node* tail, int n);
@@ -158,3 +160,25 @@ bool ListDL::equalRec(Node* list1, Node* list2) const {
     if(list1->info == list2->info) return equalRec(list1->next, list2->next);
     else return false;
 }
+int ListDL::removeUpToSum(int sum) {
+    Node* curr = this->head; 
+    int deleteUp = sum;
+    int count = 0;
+    while(curr) {
+       if(deleteUp - curr->info < 0) break; 
+       count++;
+       deleteUp -= curr->info;
+       Node* tmp = curr;
+       curr = curr->next;
+       delete tmp;
+    }
+    this->head = curr;
+    if(this->head != nullptr) {
+        this->head->prev = nullptr;
+    }
+    else {
+        this->tail = nullptr;
+    }
+    return count;
+}
+        int removeUpToSumRec(int sum, Node* curr);

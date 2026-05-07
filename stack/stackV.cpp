@@ -11,7 +11,6 @@ Stack::Stack() {
 }
 
 Stack::~Stack() {
-
 }
 
 Stack::Stack(const Stack& s) {
